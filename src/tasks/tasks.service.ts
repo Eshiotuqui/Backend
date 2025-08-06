@@ -1,4 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException
+} from "@nestjs/common";
 import type { Task } from "./entities/task.entity";
 
 @Injectable()
@@ -15,7 +20,11 @@ export class TasksService {
   }
 
   findTaskById(id: string) {
-    return this.tasks.find((task) => task.id === Number(id));
+    const task = this.tasks.find((task) => task.id === Number(id));
+
+    if (task) return task;
+
+    throw new NotFoundException("Task not found");
   }
 
   createTask(body: any) {
@@ -29,5 +38,18 @@ export class TasksService {
     this.tasks.push(newTask);
 
     return newTask;
+  }
+
+  updateTask(id: string, body: any) {
+    const taskIndex = this.tasks.findIndex((task) => task.id === Number(id));
+
+    if (taskIndex < 0) {
+      throw new NotFoundException("Task not found");
+    }
+
+    const taskItem = this.tasks[taskIndex];
+    this.tasks[taskIndex] = { ...taskItem, ...body };
+
+    return this.tasks[taskIndex];
   }
 }

@@ -30,10 +30,7 @@ export class TasksController {
 
   @Patch(":id")
   updateTask(@Param("id") id: string, @Body() body: any) {
-    console.log(body);
-    console.log(id);
-
-    return "Atualizando tarefa";
+    return this.tasksService.updateTask(id, body);
   }
 
   @Delete(":id")
