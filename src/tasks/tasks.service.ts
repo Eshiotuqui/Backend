@@ -5,6 +5,8 @@ import {
   NotFoundException
 } from "@nestjs/common";
 import type { Task } from "./entities/task.entity";
+import type { CreateTaskDto } from "./dto/create-task.dto";
+import type { UpdateTaskDto } from "./dto/update-task.dto";
 
 @Injectable()
 export class TasksService {
@@ -27,12 +29,13 @@ export class TasksService {
     throw new NotFoundException("Task not found");
   }
 
-  createTask(body: any) {
+  createTask(CreateTaskDto: CreateTaskDto) {
     const newId = this.tasks.length + 1;
 
     const newTask = {
       id: newId,
-      ...body
+      ...CreateTaskDto,
+      completed: false
     };
 
     this.tasks.push(newTask);
@@ -40,7 +43,7 @@ export class TasksService {
     return newTask;
   }
 
-  updateTask(id: string, body: any) {
+  updateTask(id: string, UpdateTaskDto: UpdateTaskDto) {
     const taskIndex = this.tasks.findIndex((task) => task.id === Number(id));
 
     if (taskIndex < 0) {
@@ -48,8 +51,21 @@ export class TasksService {
     }
 
     const taskItem = this.tasks[taskIndex];
-    this.tasks[taskIndex] = { ...taskItem, ...body };
+    this.tasks[taskIndex] = { ...taskItem, ...UpdateTaskDto };
 
     return this.tasks[taskIndex];
+  }
+
+  deleteTask(id: string) {
+    const taskIndex = this.tasks.findIndex((task) => task.id === Number(id));
+
+    if (taskIndex < 0) {
+      throw new NotFoundException("Task not found");
+    }
+
+    this.tasks.splice(taskIndex, 1);
+    return {
+      message: "Task deleted"
+    };
   }
 }
