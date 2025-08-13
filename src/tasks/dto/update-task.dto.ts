@@ -1,17 +1,10 @@
-// data transfer object
+import { IsBoolean, IsNotEmpty, IsOptional } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { CreateTaskDto } from "./create-task.dto";
 
-import { IsBoolean, IsOptional, IsString } from "class-validator";
-
-export class UpdateTaskDto {
-  @IsString()
-  @IsOptional()
-  readonly name?: string;
-
-  @IsString()
-  @IsOptional()
-  readonly description?: string;
-
+export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   @IsBoolean()
   @IsOptional()
+  @IsNotEmpty()
   readonly completed?: boolean;
 }
